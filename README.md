@@ -6,3 +6,4 @@ Everything I need for university!
 
 Низкоуровневое: [Тык!](https://drive.google.com/drive/folders/1hd59cbb9ZVgZU2zz21jv-ZM7ogdSkE2P?usp=sharing)
 
+Мат. Логика: [Тык!](http://efremov-el.ru)
