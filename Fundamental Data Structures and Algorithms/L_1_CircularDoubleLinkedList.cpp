@@ -39,10 +39,6 @@ public:
 
     void add(int value) {
         Node* nNode = new Node(value);
-        if (search(value)) {
-            std::cout << "This value already exists" << std::endl;
-            return;
-        }
 
         if (!head) {
             head = nNode;
@@ -106,20 +102,19 @@ public:
         if (!head || head->data == value) return;
 
         Node* current = head->next;
-        while (current != nullptr && current->data != value) {
+        while (current != nullptr) {
             current = current->next;
-        }
-
-        if (current) {
-            Node* toDelete = current->prev;
-            if (toDelete->prev) {
-                toDelete->prev->next = current;
-                current->prev = toDelete->prev;
-            } else {
-                head = current;
-                current->prev = nullptr;
+            if (current && current->data == value) {
+                Node* toDelete = current->prev;
+                if (toDelete->prev) {
+                    toDelete->prev->next = current;
+                    current->prev = toDelete->prev;
+                } else {
+                    head = current;
+                    current->prev = nullptr;
+                }
+                delete toDelete;
             }
-            delete toDelete;
         }
     }
 
@@ -140,9 +135,7 @@ public:
         Node* curr = other.head;
         while (curr != nullptr)
         {
-            if (!search(curr->data)) {
-                add(curr->data);
-            }
+            add(curr->data);
             curr = curr->next;
         }
         return;
@@ -151,6 +144,19 @@ public:
 
 int main(int argc, char const *argv[]) {
     List list1, list2;
+    list1.add(1);
+    list1.add(1);
+    list1.add(2);
+    list1.add(2);
+    list1.add(2); 
+    list1.add(4); 
+    list1.add(5);
+    list1.add(5);
+
+    list2.add(0);
+    list2.add(1);
+    list2.add(4);
+    list2.add(5);
 
     std::cout << "List 1: ";
     list1.print();
@@ -163,19 +169,19 @@ int main(int argc, char const *argv[]) {
     std::cout << "Merged List: ";
     list1.print();
 
-    list1.removeAll(20);
-
-    std::cout << "After removing 20: ";
-    list1.print();
-
-    list1.removeAll(30);
+    list1.removeAll(5);
 
     std::cout << "After removing 5: ";
     list1.print();
 
+    list1.removeBefore(2);
+
+    std::cout << "After removing before 2: ";
+    list1.print();
+
     list1.removeBefore(25);
 
-    std::cout << "After removing before 15: ";
+    std::cout << "After removing before 25: ";
     list1.print();
 
     std::cout << "Searching for 10: " << (list1.search(10) ? "Found" : "Not Found") << std::endl;
