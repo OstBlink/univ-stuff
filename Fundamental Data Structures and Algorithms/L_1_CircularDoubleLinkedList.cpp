@@ -35,6 +35,7 @@ public:
             curr = curr->next;
         }
         std::cout << std::endl;
+        std::cout << head->data << " "<< tail -> data << std::endl;
     }
 
     void add(int value) {
@@ -51,6 +52,7 @@ public:
             nNode->next = head;
             head->prev = nNode;
             head = nNode;
+            tail = nNode->next;
             return;
         }
 
@@ -98,15 +100,30 @@ public:
         }
     }
 
-    void removeBefore(int value) {
-        if (!head || head->data == value) return;
+void removeBefore(int value) {
+    if (!head || !head->next) return; 
 
-        Node* current = head->next;
-        while (current != nullptr) {
-            current = current->next;
-            if (current && current->data == value) {
-                Node* toDelete = current->prev;
-                if (toDelete->prev) {
+    if (head->data == value){
+        Node* toDelete = tail;
+        if (tail) {
+            tail = tail->prev;
+            if (tail) {
+                tail->next = nullptr;
+            } else {
+                head = nullptr; 
+            }
+            delete toDelete;
+        }
+
+    }
+
+    Node* current = head->next; 
+    while (current != nullptr) {
+        if (current->data == value) { 
+            Node* toDelete = current->prev; 
+
+            if (toDelete) { 
+                if (toDelete->prev) { 
                     toDelete->prev->next = current;
                     current->prev = toDelete->prev;
                 } else {
@@ -114,9 +131,16 @@ public:
                     current->prev = nullptr;
                 }
                 delete toDelete;
+                current = current->next; 
+            } else {
+                current = current->next; 
             }
+        } else {
+            current = current->next; 
         }
     }
+}
+
 
     bool search(int value) const {
         Node* current = head;
@@ -140,6 +164,35 @@ public:
         }
         return;
     }
+
+    void BTask(int max, int value) {
+        if (max == 0) {
+            std::cout << "Max can't be 0" << std::endl;
+            return;
+        }
+
+        if (max < 0 && value >= 0){
+            std::cout << "Max and value must be positive or negative at the same time" << std::endl;
+            return;
+        }
+
+        int k = value / max;
+        if (k == 0) {
+            add(value);
+            return;
+        } else {
+            for (int i = 0; i < k; i++)
+            {
+                add(max);
+            }
+            if (value - max * k != 0)
+            {
+                add(value - max * k);
+            }
+            return;
+        };
+        return;
+    }
 };
 
 int main(int argc, char const *argv[]) {
@@ -148,8 +201,8 @@ int main(int argc, char const *argv[]) {
     list1.add(1);
     list1.add(2);
     list1.add(2);
-    list1.add(2); 
-    list1.add(4); 
+    list1.add(2);
+    list1.add(4);
     list1.add(5);
     list1.add(5);
 
@@ -174,9 +227,9 @@ int main(int argc, char const *argv[]) {
     std::cout << "After removing 5: ";
     list1.print();
 
-    list1.removeBefore(2);
+    list1.removeBefore(4);
 
-    std::cout << "After removing before 2: ";
+    std::cout << "After removing before 4: ";
     list1.print();
 
     list1.removeBefore(25);
@@ -186,5 +239,12 @@ int main(int argc, char const *argv[]) {
 
     std::cout << "Searching for 10: " << (list1.search(10) ? "Found" : "Not Found") << std::endl;
 
-    return 0;
+    // List List1;
+    // int max, num;
+    // std::cout << "Enter max and value: ";
+    // std::cin >> max >> num;
+
+    // List1.BTask(max, num);
+    // List1.print();
+    // return 0;
 }
