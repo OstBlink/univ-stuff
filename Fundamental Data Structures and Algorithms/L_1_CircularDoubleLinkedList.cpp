@@ -104,21 +104,21 @@ void removeBefore(int value) {
     if (!head || !head->next) return; 
 
     if (head->data == value){
-        Node* toDelete = tail;
-        if (tail) {
-            tail = tail->prev;
+            Node* toDelete = tail;
             if (tail) {
-                tail->next = nullptr;
-            } else {
-                head = nullptr; 
+                tail = tail->prev;
+                if (tail) {
+                    tail->next = nullptr;
+                } else {
+                    head = nullptr; 
+                }
+                delete toDelete;
             }
-            delete toDelete;
         }
-
-    }
 
     Node* current = head->next; 
     while (current != nullptr) {
+        
         if (current->data == value) { 
             Node* toDelete = current->prev; 
 
