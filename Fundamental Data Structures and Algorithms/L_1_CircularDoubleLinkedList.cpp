@@ -195,56 +195,56 @@ void removeBefore(int value) {
     }
 };
 
-int main(int argc, char const *argv[]) {
-    List list1, list2;
-    list1.add(1);
-    list1.add(1);
-    list1.add(2);
-    list1.add(2);
-    list1.add(2);
-    list1.add(4);
-    list1.add(5);
-    list1.add(5);
+// int main(int argc, char const *argv[]) {
+//     List list1, list2;
+//     list1.add(1);
+//     list1.add(1);
+//     list1.add(2);
+//     list1.add(2);
+//     list1.add(2);
+//     list1.add(4);
+//     list1.add(5);
+//     list1.add(5);
 
-    list2.add(0);
-    list2.add(1);
-    list2.add(4);
-    list2.add(5);
+//     list2.add(0);
+//     list2.add(1);
+//     list2.add(4);
+//     list2.add(5);
 
-    std::cout << "List 1: ";
-    list1.print();
+//     std::cout << "List 1: ";
+//     list1.print();
 
-    std::cout << "List 2: ";
-    list2.print();
+//     std::cout << "List 2: ";
+//     list2.print();
 
-    list1.merge(list2);
+//     list1.merge(list2);
 
-    std::cout << "Merged List: ";
-    list1.print();
+//     std::cout << "Merged List: ";
+//     list1.print();
 
-    list1.removeAll(5);
+//     list1.removeAll(5);
 
-    std::cout << "After removing 5: ";
-    list1.print();
+//     std::cout << "After removing 5: ";
+//     list1.print();
 
-    list1.removeBefore(4);
+//     list1.removeBefore(4);
 
-    std::cout << "After removing before 4: ";
-    list1.print();
+//     std::cout << "After removing before 4: ";
+//     list1.print();
 
-    list1.removeBefore(25);
+//     list1.removeBefore(25);
 
-    std::cout << "After removing before 25: ";
-    list1.print();
+//     std::cout << "After removing before 25: ";
+//     list1.print();
 
-    std::cout << "Searching for 10: " << (list1.search(10) ? "Found" : "Not Found") << std::endl;
+//     std::cout << "Searching for 10: " << (list1.search(10) ? "Found" : "Not Found") << std::endl;
 
-    // List List1;
-    // int max, num;
-    // std::cout << "Enter max and value: ";
-    // std::cin >> max >> num;
+//     // List List1;
+//     // int max, num;
+//     // std::cout << "Enter max and value: ";
+//     // std::cin >> max >> num;
 
-    // List1.BTask(max, num);
-    // List1.print();
-    // return 0;
-}
+//     // List1.BTask(max, num);
+//     // List1.print();
+//     // return 0;
+// }

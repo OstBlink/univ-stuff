@@ -1,79 +1,50 @@
 ﻿#include <iostream>
 
 int main() {
-    double x, a, y;
-    double y1, y2;
+    short x, a, y1, y2, y;
+    setlocale(LC_ALL, "ru");
 
-    // Ввод значений x и a
     std::cout << "Введите значение x: ";
     std::cin >> x;
     std::cout << "Введите значение a: ";
     std::cin >> a;
 
-    // Используем ассемблер для вычисления y1 и y2
     __asm {
-        // Загружаем x и a в регистры
-        fld x           // Загружаем x на стек
-        fld st(0)       // Копируем x (для y1)
-        fld a           // Загружаем a на стек
+        mov ax, x            // Загружаем x в ax
+        cmp ax, 4            // Сравниваем x с 4
+        jg GreaterThan4      // Если |x| > 4, переходим к GreaterThan4
 
-        // Вычисление y1
-        fabs            // Берем абсолютное значение x
-        fld1           // Загружаем 1.0 (для сравнения с 4)
-        fld1           // Загружаем 1.0 (для сравнения с 4)
-        fadd st(0), st(1) // Получаем 2.0
-        fld1           // Загружаем 1.0 (для сравнения с 4)
-        fadd st(0), st(1) // Получаем 4.0
+        // Если |x| <= 4
+        mov bx, a            // Загружаем a в bx
+        add bx, 4            // bx = a + 4
+        mov y1, bx           // y1 = 4 + a
+        jmp EndY1            // Переход к EndY1
 
-        fcomip st(0), st(2) // Сравниваем |x| с 4.0
-        fstsw ax          // Сохраняем флаги в регистре ax
-        sahf              // Загружаем флаги в регистр процессора
+    GreaterThan4:
+        shl ax, 1            // y1 = 2 * x (умножаем x на 2)
+        mov y1, ax           // Сохраняем результат в y1
 
-        jbe below_four     // Если |x| <= 4, переходим к below_four
+    EndY1:
+        mov ax, x            // Загружаем x в ax
+        cmp ax, a            // Сравниваем x с a
+        jl LessThanA         // Если x < a, переходим к LessThanA
 
-        // Вычисление y1 = 2 * x
-        fld st(1)         // Загружаем x
-        fadd st(0), st(0) // Умножаем на 2 (2 * x)
-        fstp y1           // Сохраняем результат в y1
-        jmp end_y1        // Переходим к end_y1
+        // Если x >= a
+        mov y2, ax           // y2 = x
+        jmp EndY2            // Переход к EndY2
 
-        below_four :
-        // Вычисление y1 = 4 + a
-        fld a             // Загружаем a
-            fadd st(0), st(1) // Сложение (4 + a)
-            fstp y1           // Сохраняем результат в y1
+    LessThanA:
+        mov bx, a            // Загружаем a в bx
+        sub bx, x            // y2 = a - x
+        mov y2, bx           // Сохраняем результат в y2
 
-            end_y1 :
-        // Вычисление y2
-        fld x             // Загружаем x
-            fld a             // Загружаем a
-            fcomip st(0), st(1) // Сравниваем x и a
-            fstsw ax          // Сохраняем флаги в регистре ax
-            sahf              // Загружаем флаги в регистр процессора
-
-            jae x_greater_or_equal_a // Если x >= a, переходим к x_greater_or_equal_a
-
-            // Вычисление y2 = a - x
-            fld a             // Загружаем a
-            fsub st(0), st(1) // Вычитание (a - x)
-            fstp y2           // Сохраняем результат в y2
-            jmp end_y2
-
-            x_greater_or_equal_a :
-        // Если x >= a, то y2 = 0 (или любое другое значение, если необходимо)
-        fldz              // Загружаем 0.0
-            fstp y2           // Сохраняем результат в y2
-
-            end_y2 :
-        // Вычисление y = y1 + y2
-        fld y1            // Загружаем y1
-            fld y2            // Загружаем y2
-            fadd st(0), st(1) // Сложение (y = y1 + y2)
-            fstp y            // Сохраняем результат в y
-
+    EndY2:
+        mov ax, y1           // Загружаем y1 в ax
+        add ax, y2           // y = y1 + y2
+        mov y, ax            // Сохраняем результат в y
     }
 
-    std::cout << "Результат y: " << y << std::endl;
+    std::cout << "y = " << y << std::endl;
 
     return 0;
 }

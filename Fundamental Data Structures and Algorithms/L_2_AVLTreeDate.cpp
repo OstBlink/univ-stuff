@@ -1,18 +1,30 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <regex>
 #include "L_1_CircularDoubleLinkedList.cpp"
 
 struct Date
 {
-    int day, month, year;
-    Date(int day, int month, int year) : 
+    std::string day, month, year;
+    List list;
+    Date(std::string day, std::string month, std::string year) : 
     day(day), month(month), year(year) {};
 
+    bool isValid() const {
+        int d = stoi(day);
+        int m = stoi(month);
+        int y = stoi(year);
+        return (d >= 1 && d <= 31) && (m >= 1 && m <= 12) && (y >= 1);
+    }
+
     bool operator<(const Date& other) const {
-        if (year != other.year)
-            return year < other.year;
-        if (month != other.month)
-            return month < other.month;
-        return day < other.day;
+        if (stoi(year) != stoi(other.year))
+            return stoi(year) < stoi(other.year);
+        if (stoi(month) != stoi(other.month))
+            return stoi(month) < stoi(other.month);
+        return stoi(day) < stoi(other.day);
     }
 
     // Перегрузка оператора ">"
@@ -41,6 +53,11 @@ struct Date
     }
 };
 
+    std::ostream& operator<<(std::ostream& os, const Date& date) {
+    os << date.day << "." << date.month << "." << date.year;
+    return os;
+    }
+
 
 class AVLNode {
     public:
@@ -60,15 +77,23 @@ class AVLTree
 private:
     AVLNode* root;
 
+    void destroyTree(AVLNode* node) {
+        if (node) {
+            destroyTree(node->Left);   // Освобождаем память для левого поддерева
+            destroyTree(node->Right);  // Освобождаем память для правого поддерева
+            delete node;               // Освобождаем память для текущего узла
+        }
+    }
+
 //Вспомогательные элементы балансировки
     
     int Height(AVLNode* Node) {
-        if (Node == nullptr) return;
+        if (Node == nullptr) return 0;
         return Node->Height;
     }
 
     int balanceFactor(AVLNode* Node) {
-        if (Node == nullptr) return;
+        if (Node == nullptr) return 0;
         return Height(Node->Left) - Height(Node->Right);
     }
 
@@ -116,21 +141,17 @@ private:
 
         int balance = balanceFactor(Node);
 
-        // Left Left Case
         if (balance > 1 && Data < Node->Left->Data)
             return RightRotate(Node);
 
-        // Right Right Case
         if (balance < -1 && Data > Node->Right->Data)
             return LeftRotate(Node);
 
-        // Left Right Case
         if (balance > 1 && Data > Node->Left->Data) {
             Node->Left = LeftRotate(Node->Left);
             return RightRotate(Node);
         }
 
-        // Right Left Case
         if (balance < -1 && Data < Node->Right->Data) {
             Node->Right = RightRotate(Node->Right);
             return LeftRotate(Node);
@@ -146,18 +167,154 @@ private:
         return current;
     }
 
+    AVLNode* deleteNode(AVLNode* root, Date Data) {
+        if (root ==nullptr)
+        {
+            return root;
+        }
+        
+        if (Data < root->Data) 
+            root->Left = deleteNode(root->Left, Data);
+        else if (Data > root->Data)
+            root->Right = deleteNode(root->Right, Data);
+        else {
+            if ((root->Left == nullptr) || (root->Right == nullptr)) {
+                AVLNode* temp = root->Left ? root->Left : root->Right;
+                if (temp == nullptr) {
+                    temp = root;
+                    root = nullptr;
+                } else {
+                    *root = *temp;
+                }
+                delete temp;
+            } else {
+                AVLNode* temp = maxValueNode(root->Right);
+                root->Data = temp->Data;
+                root->Right = deleteNode(root->Right, temp->Data);
+            }
+        }
+
+        if (root == nullptr)
+        {
+            return root;
+        }
+
+        root->Height = 1 + std::max(Height(root->Left), Height(root->Right));
+
+        int balance = balanceFactor(root);
+
+        if (balance > 1 && balanceFactor(root->Left) >= 0)
+            return RightRotate(root);
+
+        if (balance > 1 && balanceFactor(root->Left) < 0) {
+            root->Left = LeftRotate(root->Left);
+            return RightRotate(root);
+        }
+
+        if (balance < -1 && balanceFactor(root->Right) <= 0)
+            return LeftRotate(root);
+
+        if (balance < -1 && balanceFactor(root->Right) > 0) {
+            root->Right = RightRotate(root->Right);
+            return LeftRotate(root);
+        }
+
+        return root; 
+    }
+    
+    void inorder(AVLNode* root)
+    {
+        if (root != nullptr) {
+            inorder(root->Left);
+            std::cout << root->Data << " ";
+            inorder(root->Right);
+        }
+    }
+
+    bool search(AVLNode* root, Date Data)
+    {
+        if (root == nullptr)
+            return false;
+        if (root->Data == Data)
+            return true;
+        if (Data < root->Data)
+            return search(root->Left, Data);
+        return search(root->Right, Data);
+    }
 
 
 
 public:
-    AVLTree(/* args */);
-    ~AVLTree();
+    AVLTree() : root(nullptr) {}
+    ~AVLTree() {
+        destroyTree(root);
+        }
+
+    void insert(Date Data) { root = insert(root, Data); }
+
+    void remove(Date Data) { root = deleteNode(root, Data); }
+
+    bool search(Date Data) { return search(root, Data); }
+
+
+    void printInorder()
+    {
+        inorder(root);
+        std::cout << std::endl;
+    }
 };
 
-AVLTree::AVLTree(/* args */)
-{
+AVLTree Building(){
+    
+    AVLTree Tree;
+    std::string line,line1;
+
+    std::ifstream in, in1;
+    in.open("input.txt");
+    
+    if (in.is_open())
+    {
+        std::cout << "[INFO] File opened successfully! Reading starts..." << std::endl;
+        std::regex Pattern(R"((d{1,2})[.s/](d{1,2})[.s/](d{4}))");
+
+        while (std::getline(in, line))
+        {   
+            std::smatch match;
+            std::cout << line << std::endl;
+            if (std::regex_match(line, match, Pattern)) {
+                Date Data(match[1].str(), match[2].str(), match[3].str());
+                if (Data.isValid())
+                {
+                    in1.open("input.txt");
+                    int i = 1;
+                    while (std::getline(in1,line1))
+                    {
+                        if (line == line1)
+                        {
+                            Data.list.add(i);
+                        }
+                        i++;
+                    }
+                    Tree.insert(Data);
+                } else {
+                    std::cout << "[WARN] Data was invalid, skipping..." << std::endl;
+                }
+                
+            } else {std::cout << "[WARN] Pattern doesn't match!" << std::endl;}
+            in1.close();
+        } 
+    } else
+    {
+        std::cout << "[ERROR] Couldn't open the file, too bad!" << std::endl;
+    }
+    in.close();
+    return Tree;
+    
+
 }
 
-AVLTree::~AVLTree()
+int main(int argc, char const *argv[])
 {
+    AVLTree Tree = Building();
+    Tree.printInorder();
 }
