@@ -10,7 +10,7 @@ struct Date
     std::string day, month, year;
     List list;
     Date(std::string day, std::string month, std::string year) : 
-    day(day), month(month), year(year) {};
+    day(day), month(month), year(year), list() {};
 
     bool isValid() const {
         int d = stoi(day);
@@ -246,15 +246,16 @@ private:
 
 public:
     AVLTree() : root(nullptr) {}
-    ~AVLTree() {
-        destroyTree(root);
-        }
 
     void insert(Date Data) { root = insert(root, Data); }
 
     void remove(Date Data) { root = deleteNode(root, Data); }
 
     bool search(Date Data) { return search(root, Data); }
+
+    void destroy() {destroyTree(root);}
+
+    AVLNode* sroot() {return root;} 
 
 
     void printInorder()
@@ -268,14 +269,15 @@ AVLTree Building(){
     
     AVLTree Tree;
     std::string line,line1;
+    int i;
 
     std::ifstream in, in1;
-    in.open("input.txt");
+    in.open("C:\\Users\\xtobl\\univ-stuff\\Fundamental Data Structures and Algorithms\\input.txt");
     
     if (in.is_open())
     {
         std::cout << "[INFO] File opened successfully! Reading starts..." << std::endl;
-        std::regex Pattern(R"((d{1,2})[.s/](d{1,2})[.s/](d{4}))");
+        std::regex Pattern(R"((\d{1,2})[.\s/](\d{1,2})[.\s/](\d{4}))");
 
         while (std::getline(in, line))
         {   
@@ -285,8 +287,8 @@ AVLTree Building(){
                 Date Data(match[1].str(), match[2].str(), match[3].str());
                 if (Data.isValid())
                 {
-                    in1.open("input.txt");
-                    int i = 1;
+                    in1.open("C:\\Users\\xtobl\\univ-stuff\\Fundamental Data Structures and Algorithms\\input.txt");
+                    i = 1;
                     while (std::getline(in1,line1))
                     {
                         if (line == line1)
@@ -308,6 +310,7 @@ AVLTree Building(){
         std::cout << "[ERROR] Couldn't open the file, too bad!" << std::endl;
     }
     in.close();
+    std::cout << "[INFO] Reading end." << std::endl;
     return Tree;
     
 
@@ -317,4 +320,8 @@ int main(int argc, char const *argv[])
 {
     AVLTree Tree = Building();
     Tree.printInorder();
+    Tree.sroot()->Data.list.print();
+    Tree.sroot()->Left->Data.list.print();
+    Tree.sroot()->Right->Data.list.print();
+    return 0;
 }
