@@ -272,7 +272,7 @@ AVLTree Building(){
     int i;
 
     std::ifstream in, in1;
-    in.open("C:\\Users\\xtobl\\univ-stuff\\Fundamental Data Structures and Algorithms\\input.txt");
+    in.open("B:\\Development\\univ-stuff\\Fundamental Data Structures and Algorithms\\input.txt");
     
     if (in.is_open())
     {
@@ -287,7 +287,7 @@ AVLTree Building(){
                 Date Data(match[1].str(), match[2].str(), match[3].str());
                 if (Data.isValid())
                 {
-                    in1.open("C:\\Users\\xtobl\\univ-stuff\\Fundamental Data Structures and Algorithms\\input.txt");
+                    in1.open("B:\\Development\\univ-stuff\\Fundamental Data Structures and Algorithms\\input.txt");
                     i = 1;
                     while (std::getline(in1,line1))
                     {

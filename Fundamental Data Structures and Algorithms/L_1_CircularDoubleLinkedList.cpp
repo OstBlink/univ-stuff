@@ -16,7 +16,7 @@ public:
     List() : head(nullptr), tail(nullptr) {}
 
     ~List() {
-        while (head != nullptr) {
+        while (head) {
             Node* temp = head;
             head = head->next;
             delete temp;
