@@ -3,14 +3,12 @@
 #include <sstream>
 #include <string>
 #include <regex>
-#include "L_1_CircularDoubleLinkedList.cpp"
 
 struct Date
 {
     std::string day, month, year;
-    List list;
     Date(std::string day, std::string month, std::string year) : 
-    day(day), month(month), year(year), list() {};
+    day(day), month(month), year(year){};
 
     bool isValid() const {
         int d = stoi(day);
@@ -231,6 +229,17 @@ private:
         }
     }
 
+    void printTree(AVLNode* root, int h) {
+    if (root != nullptr) {
+        printTree(root->Left, h + 4);
+        for (int i = 1; i <= h; ++i) {
+            std::cout << " ";
+        }
+        std::cout << root->Data << "\n"; // Выводим только данные узла
+        printTree(root->Right, h + 4);
+    }
+}
+
     bool search(AVLNode* root, Date Data)
     {
         if (root == nullptr)
@@ -257,6 +266,8 @@ public:
 
     AVLNode* sroot() {return root;} 
 
+    void print() {return printTree(root, 4); }
+
 
     void printInorder()
     {
@@ -268,10 +279,10 @@ public:
 AVLTree Building(){
     
     AVLTree Tree;
-    std::string line,line1;
+    std::string line;
     int i;
 
-    std::ifstream in, in1;
+    std::ifstream in;
     in.open("B:\\Development\\univ-stuff\\Fundamental Data Structures and Algorithms\\input.txt");
     
     if (in.is_open())
@@ -282,28 +293,16 @@ AVLTree Building(){
         while (std::getline(in, line))
         {   
             std::smatch match;
-            std::cout << line << std::endl;
             if (std::regex_match(line, match, Pattern)) {
                 Date Data(match[1].str(), match[2].str(), match[3].str());
                 if (Data.isValid())
                 {
-                    in1.open("B:\\Development\\univ-stuff\\Fundamental Data Structures and Algorithms\\input.txt");
-                    i = 1;
-                    while (std::getline(in1,line1))
-                    {
-                        if (line == line1)
-                        {
-                            Data.list.add(i);
-                        }
-                        i++;
-                    }
                     Tree.insert(Data);
                 } else {
                     std::cout << "[WARN] Data was invalid, skipping..." << std::endl;
                 }
                 
             } else {std::cout << "[WARN] Pattern doesn't match!" << std::endl;}
-            in1.close();
         } 
     } else
     {
@@ -312,16 +311,12 @@ AVLTree Building(){
     in.close();
     std::cout << "[INFO] Reading end." << std::endl;
     return Tree;
-    
-
 }
 
 int main(int argc, char const *argv[])
 {
     AVLTree Tree = Building();
     Tree.printInorder();
-    Tree.sroot()->Data.list.print();
-    Tree.sroot()->Left->Data.list.print();
-    Tree.sroot()->Right->Data.list.print();
+    Tree.print();
     return 0;
 }
