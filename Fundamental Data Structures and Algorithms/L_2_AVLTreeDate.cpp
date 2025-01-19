@@ -220,14 +220,13 @@ private:
         return root; 
     }
     
-    void inorder(AVLNode* root)
+    void outorder(AVLNode* root)
     {
         if (root != nullptr) {
-            inorder(root->Left);
+            outorder(root->Right);
             std::cout << root->Data << " ";
-            inorder(root->Right);
-        }
-    }
+            outorder(root->Left);
+        }    }
 
     void printTree(AVLNode* root, int h) {
     if (root != nullptr) {
@@ -251,8 +250,24 @@ private:
         return search(root->Right, Data);
     }
 
+    void FileOutput(AVLNode* root) {
+        std::ofstream out("B:\\Development\\univ-stuff\\Fundamental Data Structures and Algorithms\\output.txt");
+        if (out.is_open()) {
+            out << "AVL Tree:\n";
+            if (root != nullptr) {
+                FileOutputHelper(root, out);
+            }
+            out.close();
+        }
+    }
 
-
+    void FileOutputHelper(AVLNode* root, std::ofstream& out) {
+        if (root != nullptr) {
+            FileOutputHelper(root->Right, out);
+            out << root->Data << "\n";
+            FileOutputHelper(root->Left, out);
+        }
+    }
 public:
     AVLTree() : root(nullptr) {}
 
@@ -268,13 +283,15 @@ public:
 
     void print() {return printTree(root, 4); }
 
-
     void printInorder()
     {
-        inorder(root);
+        outorder(root);
         std::cout << std::endl;
     }
+
+    void FileOutput() { FileOutput(root); }
 };
+
 
 AVLTree Building(){
     
@@ -318,5 +335,6 @@ int main(int argc, char const *argv[])
     AVLTree Tree = Building();
     Tree.printInorder();
     Tree.print();
+    Tree.FileOutput();
     return 0;
 }
